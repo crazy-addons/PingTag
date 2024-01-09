@@ -1,0 +1,18 @@
+{
+  "pingtag": {
+    "settings": {
+      "name": "PingTag",
+      "enabled": {
+        "name": "Enabled"
+      },
+      "coloured": {
+        "name": "Color Ping Tag",
+        "description": "The color of the ping tag changes depending on its severity."
+      },
+      "customFormat": {
+        "name": "Custom Format",
+        "description": "A custom format for the Tag. You can use Color Codes with '&'. Place a %s where the ping should be."
+      }
+    }
+  }
+}
