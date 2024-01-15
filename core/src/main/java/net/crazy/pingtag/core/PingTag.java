@@ -1,6 +1,8 @@
 package net.crazy.pingtag.core;
 
 import net.labymod.api.client.component.Component;
+import net.labymod.api.client.component.format.NamedTextColor;
+import net.labymod.api.client.component.format.TextColor;
 import net.labymod.api.client.entity.player.Player;
 import net.labymod.api.client.entity.player.tag.tags.NameTag;
 import net.labymod.api.client.render.font.RenderableComponent;
@@ -17,6 +19,10 @@ public class PingTag extends NameTag {
         return new PingTag(addon);
     }
 
+
+    private final String defaultFormat = "%sms";
+    public String format = "%sms";
+
     @Override
     protected @Nullable RenderableComponent getRenderableComponent() {
         if (!addon.configuration().enabled().get())
@@ -32,32 +38,31 @@ public class PingTag extends NameTag {
             return null;
         }
 
-        String format = addon.configuration().getCustomFormat().getOrDefault("&6%sms").replace("&", "§");
+        Component pingTag = Component.text(String.format(format, ping));
 
         if (addon.configuration().getColoured().get()) {
-            String color = getPingColor(ping);
-            format = color + "%sms";
+            pingTag.color(getPingColor(ping));
         }
 
-        return RenderableComponent.of(Component.text(String.format(format, ping)));
+        return RenderableComponent.of(pingTag);
     }
 
-    @Override
-    public boolean isVisible() {
-        return super.isVisible() && addon.configuration().enabled().get();
-    }
-
-    private String getPingColor(int ping) {
-        String color;
+    private TextColor getPingColor(int ping) {
+        TextColor color;
 
         if (ping < 150) {
-            color = "§a";
+            color = NamedTextColor.GREEN;
         } else if (ping < 300) {
-            color = "§c";
+            color = NamedTextColor.RED;
         } else {
-            color = "§4";
+            color = NamedTextColor.DARK_RED;
         }
 
         return color;
+    }
+
+    public void updateFormat() {
+        this.format = addon.configuration().getColoured().get() ? this.defaultFormat
+                : addon.configuration().getCustomFormat().getOrDefault("%sms").replace('&', '§');
     }
 }
