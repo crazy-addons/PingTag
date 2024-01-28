@@ -2,8 +2,6 @@ package net.crazy.pingtag.core;
 
 import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
-import net.labymod.api.client.component.format.NamedTextColor;
-import net.labymod.api.client.component.format.TextColor;
 import net.labymod.api.client.entity.player.Player;
 import net.labymod.api.client.entity.player.tag.tags.NameTag;
 import net.labymod.api.client.render.font.ComponentMapper;
@@ -12,7 +10,11 @@ import net.labymod.api.configuration.loader.property.ConfigProperty;
 import org.jetbrains.annotations.Nullable;
 
 public class PingTag extends NameTag {
-    private PingTagAddon addon;
+
+    private final PingTagAddon addon;
+
+    private String prePingFormat;
+    private String postPingFormat;
 
     private PingTag(PingTagAddon addon) {
         this.addon = addon;
@@ -20,15 +22,11 @@ public class PingTag extends NameTag {
         ConfigProperty<String> customFormat = addon.configuration().getCustomFormat();
         this.updateCustomFormat(customFormat);
         customFormat.addChangeListener(ignored -> this.updateCustomFormat(customFormat));
-        addon.configuration().getColoured().addChangeListener(ignored -> this.updateCustomFormat(customFormat));
     }
 
     public static PingTag create(PingTagAddon addon) {
         return new PingTag(addon);
     }
-
-    private String prePingFormat;
-    private String postPingFormat;
 
     @Override
     protected @Nullable RenderableComponent getRenderableComponent() {
@@ -42,39 +40,35 @@ public class PingTag extends NameTag {
         }
 
         int ping = player.networkPlayerInfo().getCurrentPing();
-        if (ping == 0) {
+        if(ping == 0) {
             return null;
         }
 
-        String format = this.prePingFormat + ping;
-        if (this.postPingFormat != null) {
-            format += this.postPingFormat;
+        String format = this.prePingFormat;
+        if (configuration.getColoured().get()) {
+            String color;
+            if (ping < 150) {
+                color = "§a";
+            } else if (ping < 300) {
+                color = "§c";
+            } else {
+                color = "§4";
+            }
+
+            format += color;
         }
 
-        if (addon.configuration().getColoured().get()) {
-            return RenderableComponent.of(Component.text(format).color(getPingColor(ping)));
+        format += ping;
+        if (this.postPingFormat != null) {
+            format += this.postPingFormat;
         }
 
         return RenderableComponent.of(Component.text(format));
     }
 
-    private TextColor getPingColor(int ping) {
-        TextColor color;
-
-        if (ping < 150) {
-            color = NamedTextColor.GREEN;
-        } else if (ping < 300) {
-            color = NamedTextColor.RED;
-        } else {
-            color = NamedTextColor.DARK_RED;
-        }
-
-        return color;
-    }
-
     private void updateCustomFormat(ConfigProperty<String> formatProperty) {
         String format = formatProperty.get();
-        if (format == null || format.trim().isEmpty() || addon.configuration().getColoured().get()) {
+        if (format == null || format.trim().length() == 0) {
             format = formatProperty.defaultValue();
         }
 
