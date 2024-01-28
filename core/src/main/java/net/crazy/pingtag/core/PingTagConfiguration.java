@@ -18,7 +18,7 @@ public class PingTagConfiguration extends AddonConfig {
 
   @TextFieldWidget.TextFieldSetting
   @SettingRequires(value = "coloured", invert = true)
-  private final ConfigProperty<String> customFormat = new ConfigProperty<>("&6%sms");
+  private final ConfigProperty<String> customFormat = new ConfigProperty<>("%ping%ms");
 
   @Override
   public ConfigProperty<Boolean> enabled() {

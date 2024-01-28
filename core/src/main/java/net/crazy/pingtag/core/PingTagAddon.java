@@ -11,7 +11,8 @@ public class PingTagAddon extends LabyAddon<PingTagConfiguration> {
   protected void enable() {
     this.registerSettingCategory();
 
-    labyAPI().tagRegistry().registerAfter("pingtag", "badge", PositionType.ABOVE_NAME, PingTag.create(this));
+    PingTag tag = PingTag.create(this);
+    labyAPI().tagRegistry().registerAfter("pingtag", "badge", PositionType.ABOVE_NAME, tag);
 
     this.logger().info("PingTag | Addon enabled.");
   }
