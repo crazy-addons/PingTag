@@ -4,6 +4,7 @@ import net.labymod.api.Laby;
 import net.labymod.api.client.component.Component;
 import net.labymod.api.client.entity.player.Player;
 import net.labymod.api.client.entity.player.tag.tags.NameTag;
+import net.labymod.api.client.network.NetworkPlayerInfo;
 import net.labymod.api.client.render.font.ComponentMapper;
 import net.labymod.api.client.render.font.RenderableComponent;
 import net.labymod.api.configuration.loader.property.ConfigProperty;
@@ -39,7 +40,12 @@ public class PingTag extends NameTag {
             return null;
         }
 
-        int ping = player.networkPlayerInfo().getCurrentPing();
+        NetworkPlayerInfo networkPlayerInfo = player.networkPlayerInfo();
+        if (networkPlayerInfo == null) {
+            return null;
+        }
+
+        int ping = networkPlayerInfo.getCurrentPing();
         if(ping == 0) {
             return null;
         }
