@@ -1,0 +1,18 @@
+{
+  "pingtag": {
+    "settings": {
+      "name": "PingTag",
+      "enabled": {
+        "name": "Aktiviert"
+      },
+      "coloured": {
+        "name": "Farbe des Ping Tag",
+        "description": "Die Farbe des Ping Tag ändert sich je nach höhe des Pings."
+      },
+      "customFormat": {
+        "name": "Benutzerdefiniertes Format",
+        "description": "Ein Benutzerdefiniertes Format des Tag. Farbcodes können mit '&' verwendet werden. Nutze '%s' für die Stelle des Pings."
+      }
+    }
+  }
+}
