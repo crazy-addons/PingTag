@@ -23,7 +23,7 @@
       },
       "customFormat": {
         "name": "Benutzerdefiniertes Format",
-        "description": "Ein Benutzerdefiniertes Format des Tag. Farbcodes können mit '&' verwendet werden. Nutze '%s' für die Stelle des Pings."
+        "description": "Ein Benutzerdefiniertes Format des Tag. Farbcodes können mit '&' verwendet werden. Nutze '%ping%' für die Stelle des Pings."
       }
     }
   }

@@ -23,7 +23,7 @@
       },
       "customFormat": {
         "name": "Custom Format",
-        "description": "A custom format for the Tag. You can use Color Codes with '&'. Place a %s where the ping should be."
+        "description": "A custom format for the Tag. You can use Color Codes with '&'. Place '%ping%' where the ping should be."
       }
     }
   }
