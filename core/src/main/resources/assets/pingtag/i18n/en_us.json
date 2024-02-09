@@ -9,9 +9,21 @@
         "name": "Color Ping Tag",
         "description": "The color of the ping tag changes depending on its severity."
       },
+      "position": {
+        "name": "Position",
+        "description": "Set the Position of the Ping Tag.",
+        "type": {
+          "above": "Above Name",
+          "below": "Below Name"
+        }
+      },
+      "scale": {
+        "name": "Scale",
+        "description": "The Scale of the Ping Tag."
+      },
       "customFormat": {
         "name": "Custom Format",
-        "description": "A custom format for the Tag. You can use Color Codes with '&'. Place a %s where the ping should be."
+        "description": "A custom format for the Tag. You can use Color Codes with '&'. Place '%ping%' where the ping should be."
       }
     }
   }
