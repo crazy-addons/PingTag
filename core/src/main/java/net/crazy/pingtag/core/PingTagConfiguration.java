@@ -1,6 +1,5 @@
 package net.crazy.pingtag.core;
 
-import net.labymod.api.Laby;
 import net.labymod.api.addon.AddonConfig;
 import net.labymod.api.client.gui.screen.widget.widgets.input.SliderWidget.SliderSetting;
 import net.labymod.api.client.gui.screen.widget.widgets.input.SwitchWidget.SwitchSetting;
@@ -13,18 +12,6 @@ import net.labymod.api.configuration.settings.annotation.SettingRequires;
 
 @ConfigName("settings")
 public class PingTagConfiguration extends AddonConfig {
-
-  public PingTagConfiguration() {
-    this.position.addChangeListener(tagPosition -> {
-      if(!enabled().get()) return;
-      if(PingTagAddon.getInstance() != null) {
-        Laby.labyAPI().tagRegistry().unregister("pingtag");
-        PingTagAddon.getInstance().logger().info("Unregistered...");
-        PingTagAddon.getInstance().registerTag();
-      }
-    });
-    this.customFormat.addChangeListener(ignored -> PingTag.updateCustomFormat(this.customFormat));
-  }
 
   @SwitchSetting
   private final ConfigProperty<Boolean> enabled = new ConfigProperty<>(true);

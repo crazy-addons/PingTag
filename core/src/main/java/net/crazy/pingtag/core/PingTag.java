@@ -18,9 +18,10 @@ public class PingTag extends NameTag {
     private static String postPingFormat;
 
     public PingTag(PingTagAddon addon) {
-        this.addon = addon;
-        ConfigProperty<String> customFormat = addon.configuration().getCustomFormat();
-        updateCustomFormat(customFormat);
+      this.addon = addon;
+      ConfigProperty<String> customFormat = addon.configuration().getCustomFormat();
+      customFormat.addChangeListener(ignored -> PingTag.updateCustomFormat(customFormat));
+      updateCustomFormat(customFormat);
     }
 
     @Override
@@ -65,11 +66,6 @@ public class PingTag extends NameTag {
 
         return RenderableComponent.of(Component.text(format));
     }
-
-  @Override
-  public boolean isVisible() {
-    return this.addon.configuration().enabled().get() && entity instanceof Player;
-  }
 
   @Override
   public float getScale() {
