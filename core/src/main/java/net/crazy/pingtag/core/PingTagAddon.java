@@ -20,7 +20,6 @@ public class PingTagAddon extends LabyAddon<PingTagConfiguration> {
     registerTag();
 
     configuration().getPosition().addChangeListener(tagPosition -> {
-      if(!configuration().enabled().get()) return;
       Laby.labyAPI().tagRegistry().unregister("pingtag");
       registerTag();
     });
