@@ -14,19 +14,14 @@ public class PingTag extends NameTag {
 
     private final PingTagAddon addon;
 
-    private String prePingFormat;
-    private String postPingFormat;
+    private static String prePingFormat;
+    private static String postPingFormat;
 
-    private PingTag(PingTagAddon addon) {
-        this.addon = addon;
-
-        ConfigProperty<String> customFormat = addon.configuration().getCustomFormat();
-        this.updateCustomFormat(customFormat);
-        customFormat.addChangeListener(ignored -> this.updateCustomFormat(customFormat));
-    }
-
-    public static PingTag create(PingTagAddon addon) {
-        return new PingTag(addon);
+    public PingTag(PingTagAddon addon) {
+      this.addon = addon;
+      ConfigProperty<String> customFormat = addon.configuration().getCustomFormat();
+      customFormat.addChangeListener(ignored -> PingTag.updateCustomFormat(customFormat));
+      updateCustomFormat(customFormat);
     }
 
     @Override
@@ -50,7 +45,7 @@ public class PingTag extends NameTag {
             return null;
         }
 
-        String format = this.prePingFormat;
+        String format = prePingFormat;
         if (configuration.getColoured().get()) {
             String color;
             if (ping < 150) {
@@ -65,22 +60,27 @@ public class PingTag extends NameTag {
         }
 
         format += ping;
-        if (this.postPingFormat != null) {
-            format += this.postPingFormat;
+        if (postPingFormat != null) {
+            format += postPingFormat;
         }
 
         return RenderableComponent.of(Component.text(format));
     }
 
-    private void updateCustomFormat(ConfigProperty<String> formatProperty) {
+  @Override
+  public float getScale() {
+    return this.addon.configuration().getScale().get();
+  }
+
+  public static void updateCustomFormat(ConfigProperty<String> formatProperty) {
         String format = formatProperty.get();
-        if (format == null || format.trim().length() == 0) {
+        if (format == null || format.trim().isEmpty()) {
             format = formatProperty.defaultValue();
         }
 
         ComponentMapper componentMapper = Laby.labyAPI().minecraft().componentMapper();
         String[] parts = componentMapper.translateColorCodes(format).split("%ping%", 2);
-        this.prePingFormat = parts[0];
-        this.postPingFormat = parts.length == 2 ? parts[1] : null;
+        prePingFormat = parts[0];
+        postPingFormat = parts.length == 2 ? parts[1] : null;
     }
 }
