@@ -1,6 +1,7 @@
 package net.crazy.pingtag.core;
 
 import net.labymod.api.addon.AddonConfig;
+import net.labymod.api.client.entity.player.tag.PositionType;
 import net.labymod.api.client.gui.screen.widget.widgets.input.SliderWidget.SliderSetting;
 import net.labymod.api.client.gui.screen.widget.widgets.input.SwitchWidget.SwitchSetting;
 import net.labymod.api.client.gui.screen.widget.widgets.input.TextFieldWidget;
@@ -25,7 +26,7 @@ public class PingTagConfiguration extends AddonConfig {
 
   @DropdownSetting
   @DropdownEntryTranslationPrefix("pingtag.settings.position.type")
-  private final ConfigProperty<Position> position = new ConfigProperty<>(Position.ABOVE);
+  private final ConfigProperty<Position> position = new ConfigProperty<>(Position.BELOW);
 
   @SliderSetting(min = 0.4F, max = 1.5F, steps = 0.1F)
   private final ConfigProperty<Float> scale = new ConfigProperty<>(1.0F);
@@ -36,23 +37,34 @@ public class PingTagConfiguration extends AddonConfig {
   }
 
   public ConfigProperty<Boolean> getColoured() {
-    return coloured;
+    return this.coloured;
   }
 
   public ConfigProperty<String> getCustomFormat() {
-    return customFormat;
+    return this.customFormat;
   }
 
   public ConfigProperty<Position> getPosition() {
-    return position;
+    return this.position;
   }
 
   public ConfigProperty<Float> getScale() {
-    return scale;
+    return this.scale;
   }
 
   public enum Position {
-    ABOVE, BELOW
+    ABOVE(PositionType.ABOVE_NAME),
+    BELOW(PositionType.BELOW_NAME);
+
+    private final PositionType tagPosition;
+
+    Position(PositionType tagPosition) {
+      this.tagPosition = tagPosition;
+    }
+
+    public PositionType getTagPosition() {
+      return this.tagPosition;
+    }
   }
 
 }
