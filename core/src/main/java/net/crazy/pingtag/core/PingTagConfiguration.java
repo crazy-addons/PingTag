@@ -5,7 +5,6 @@ import net.labymod.api.client.entity.player.tag.PositionType;
 import net.labymod.api.client.gui.screen.widget.widgets.input.SliderWidget.SliderSetting;
 import net.labymod.api.client.gui.screen.widget.widgets.input.SwitchWidget.SwitchSetting;
 import net.labymod.api.client.gui.screen.widget.widgets.input.TextFieldWidget.TextFieldSetting;
-import net.labymod.api.client.gui.screen.widget.widgets.input.dropdown.DropdownWidget.DropdownEntryTranslationPrefix;
 import net.labymod.api.client.gui.screen.widget.widgets.input.dropdown.DropdownWidget.DropdownSetting;
 import net.labymod.api.configuration.loader.annotation.ConfigName;
 import net.labymod.api.configuration.loader.property.ConfigProperty;
@@ -23,7 +22,6 @@ public class PingTagConfiguration extends AddonConfig {
   private final ConfigProperty<String> customFormat = new ConfigProperty<>("&a%ping%ms");
 
   @DropdownSetting
-  @DropdownEntryTranslationPrefix("pingtag.settings.position.type")
   private final ConfigProperty<Position> position = new ConfigProperty<>(Position.BELOW);
 
   @SliderSetting(min = 0.4F, max = 1.5F, steps = 0.1F)

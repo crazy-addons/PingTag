@@ -12,7 +12,7 @@
       "position": {
         "name": "Position",
         "description": "Setzte die Position des Ping Tag.",
-        "type": {
+        "entries": {
           "above": "Über dem Name",
           "below": "Unter dem Name"
         }
