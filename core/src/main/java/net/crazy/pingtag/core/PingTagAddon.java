@@ -9,30 +9,17 @@ import net.labymod.api.models.addon.annotation.AddonMain;
 @AddonMain
 public class PingTagAddon extends LabyAddon<PingTagConfiguration> {
 
-  private PingTag pingTag;
-
   @Override
   protected void enable() {
     this.registerSettingCategory();
 
-    pingTag = new PingTag(this);
-
-    registerTag();
-
-    configuration().getPosition().addChangeListener(tagPosition -> {
-      Laby.labyAPI().tagRegistry().unregister("pingtag");
-      registerTag();
-    });
+    for (Position position : Position.values()) {
+      PositionType positionType = position.getTagPosition();
+      Laby.labyAPI().tagRegistry()
+          .register("ping_display", positionType, new PingTag(this, positionType));
+    }
 
     this.logger().info("PingTag | Addon enabled.");
-  }
-
-  public void registerTag() {
-    if(this.configuration().getPosition().get() == Position.ABOVE) {
-      labyAPI().tagRegistry().registerAfter("badge", "pingtag", PositionType.ABOVE_NAME, this.pingTag);
-    } else {
-      labyAPI().tagRegistry().register("pingtag", PositionType.BELOW_NAME, this.pingTag);
-    }
   }
 
   @Override

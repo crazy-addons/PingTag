@@ -1,86 +1,83 @@
 package net.crazy.pingtag.core;
 
-import net.labymod.api.Laby;
+import java.util.Collections;
+import java.util.List;
+import net.crazy.pingtag.core.snapshot.PingTagExtraKeys;
+import net.crazy.pingtag.core.snapshot.PingUserSnapshot;
 import net.labymod.api.client.component.Component;
-import net.labymod.api.client.entity.player.Player;
-import net.labymod.api.client.entity.player.tag.tags.NameTag;
-import net.labymod.api.client.network.NetworkPlayerInfo;
-import net.labymod.api.client.render.font.ComponentMapper;
-import net.labymod.api.client.render.font.RenderableComponent;
-import net.labymod.api.configuration.loader.property.ConfigProperty;
-import org.jetbrains.annotations.Nullable;
+import net.labymod.api.client.component.format.NamedTextColor;
+import net.labymod.api.client.component.format.TextColor;
+import net.labymod.api.client.component.serializer.legacy.LegacyComponentSerializer;
+import net.labymod.api.client.entity.player.tag.PositionType;
+import net.labymod.api.client.entity.player.tag.tags.ComponentNameTag;
+import net.labymod.api.client.render.state.entity.AvatarSnapshot;
+import net.labymod.api.client.render.state.entity.EntitySnapshot;
+import org.jetbrains.annotations.NotNull;
 
-public class PingTag extends NameTag {
+public class PingTag extends ComponentNameTag {
 
-    private final PingTagAddon addon;
+  private static final LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
 
-    private static String prePingFormat;
-    private static String postPingFormat;
+  private final PingTagAddon addon;
+  private final PositionType registeredPosition;
+  private PositionType activePosition;
+  private boolean coloured;
+  private String customFormat;
 
-    public PingTag(PingTagAddon addon) {
-      this.addon = addon;
-      ConfigProperty<String> customFormat = addon.configuration().getCustomFormat();
-      customFormat.addChangeListener(ignored -> PingTag.updateCustomFormat(customFormat));
-      updateCustomFormat(customFormat);
+  public PingTag(PingTagAddon addon, PositionType registeredPosition) {
+    this.addon = addon;
+    this.registeredPosition = registeredPosition;
+    this.activePosition = this.addon.configuration().getPosition().get().getTagPosition();
+    this.addon.configuration().getPosition().addChangeListener(position ->
+        this.activePosition = position.getTagPosition()
+    );
+    this.coloured = this.addon.configuration().getColoured().get();
+    this.addon.configuration().getColoured().addChangeListener(coloured ->
+        this.coloured = coloured
+    );
+    this.customFormat = this.addon.configuration().getCustomFormat().get();
+    this.addon.configuration().getCustomFormat().addChangeListener(customFormat ->
+        this.customFormat = customFormat
+    );
+  }
+
+  @Override
+  protected @NotNull List<Component> buildComponents(EntitySnapshot snapshot) {
+    if (this.registeredPosition != this.activePosition) {
+      return super.buildComponents(snapshot);
     }
-
-    @Override
-    protected @Nullable RenderableComponent getRenderableComponent() {
-        if (!(this.entity instanceof Player player)) {
-            return null;
-        }
-
-        PingTagConfiguration configuration = this.addon.configuration();
-        if (!configuration.enabled().get()) {
-            return null;
-        }
-
-        NetworkPlayerInfo networkPlayerInfo = player.networkPlayerInfo();
-        if (networkPlayerInfo == null) {
-            return null;
-        }
-
-        int ping = networkPlayerInfo.getCurrentPing();
-        if(ping == 0) {
-            return null;
-        }
-
-        String format = prePingFormat;
-        if (configuration.getColoured().get()) {
-            String color;
-            if (ping < 150) {
-                color = "§a";
-            } else if (ping < 300) {
-                color = "§c";
-            } else {
-                color = "§4";
-            }
-
-            format += color;
-        }
-
-        format += ping;
-        if (postPingFormat != null) {
-            format += postPingFormat;
-        }
-
-        return RenderableComponent.of(Component.text(format));
+    if (!(snapshot instanceof AvatarSnapshot player) || player.isDiscrete()
+        || player.isInvisible()) {
+      return super.buildComponents(snapshot);
     }
+    if (!player.has(PingTagExtraKeys.PING_USER)) {
+      return super.buildComponents(snapshot);
+    }
+    PingUserSnapshot pingUser = player.get(PingTagExtraKeys.PING_USER);
+
+    Integer ping = pingUser.getPing();
+    if (ping == null) {
+      return super.buildComponents(snapshot);
+    }
+    Component formattedPing = serializer.deserialize(
+        this.customFormat.replace("%ping%", ping.toString()));
+    if (this.coloured) {
+      TextColor color;
+      if (ping < 150) {
+        color = NamedTextColor.GREEN;
+      } else if (ping < 300) {
+        color = NamedTextColor.RED;
+      } else {
+        color = NamedTextColor.DARK_RED;
+      }
+
+      formattedPing.color(color);
+    }
+    return Collections.singletonList(formattedPing);
+  }
 
   @Override
   public float getScale() {
     return this.addon.configuration().getScale().get();
   }
-
-  public static void updateCustomFormat(ConfigProperty<String> formatProperty) {
-        String format = formatProperty.get();
-        if (format == null || format.trim().isEmpty()) {
-            format = formatProperty.defaultValue();
-        }
-
-        ComponentMapper componentMapper = Laby.labyAPI().minecraft().componentMapper();
-        String[] parts = componentMapper.translateColorCodes(format).split("%ping%", 2);
-        prePingFormat = parts[0];
-        postPingFormat = parts.length == 2 ? parts[1] : null;
-    }
 }

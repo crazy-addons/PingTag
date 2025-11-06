@@ -1,7 +1,7 @@
-rootProject.name = "PingTag"
+rootProject.name = "pingtag"
 
 pluginManagement {
-    val labyGradlePluginVersion = "0.5.5"
+    val labyGradlePluginVersion = "0.6.0-SNAPSHOT"
 
     buildscript {
         repositories {
